@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace SKien\OSMap;
 
+use function SKien\OSMap\OSMapOpenRoute\buildFilename;
+
 /**
  * Class to determine route for given start/end geolocations.
  * using openroute service REST API
@@ -95,7 +97,7 @@ class OSMapOpenRoute
     /** @var string     raw response        */
     protected string $response;
     /** @var array<mixed>  JSON response as associative array      */
-    protected array $aJson;
+    protected array $aJson = [];
 
     /**
      * Create object and set API key
@@ -121,27 +123,20 @@ class OSMapOpenRoute
      * the response will result in several segments with the respective sections.
      * (number of segments = number of points less than one)
      *
-     * @param OSMapPoint|string|array<OSMapPoint|string> $pt1
-     * @param OSMapPoint|string|null $pt2
+     * @param array<OSMapPoint|string> $aPoints
      * @return bool
      */
-    public function calcRoute($pt1, $pt2 = null) : bool
+    public function calcRoute(array $aPoints) : bool
     {
         $bOK = false;
-        $aCoordinates = array();
-        if (is_array($pt1) && count($pt1) > 1 && !$pt2) {
-            // multiple coordinates ...
-            for ($i = 0; $i < count($pt1); $i++) {
-                $aCoordinates[] = $this->coordinate($pt1[$i]);
-            }
-        } elseif (!is_array($pt1) && $pt2) {
-            // ... start-end coordinates
-            $aCoordinates[] = $this->coordinate($pt1);
-            $aCoordinates[] = $this->coordinate($pt2);
-        }
-
+        $aCoordinates = [];
+        $iCnt = count($aPoints);
         // at least two points are necessary...
-        if (count($aCoordinates) > 1) {
+        if ($iCnt > 1) {
+            for ($i = 0; $i < $iCnt; $i++) {
+                $aCoordinates[] = $this->coordinate($aPoints[$i]);
+            }
+
             $aData = array();
             $aData['coordinates']   = $aCoordinates;
             $aData['instructions']  = $this->bInstructions;
@@ -315,9 +310,9 @@ class OSMapOpenRoute
     {
         $fltValue = 0.0;
         if ($iSeg < 0) {
-            $fltValue = $this->getSummaryValue($strName);
+            $fltValue = floatval($this->getSummaryValue($strName));
         } else {
-            $fltValue = $this->getSegmentValue($iSeg, $strName);
+            $fltValue = floatval($this->getSegmentValue($iSeg, $strName));
         }
         return $fltValue;
     }
@@ -349,7 +344,9 @@ class OSMapOpenRoute
         $iCount = 0;
         if ($this->getSegments() !== null) {
             $aSteps = $this->getSegmentValue($iSeg, 'steps');
-            $iCount = count($aSteps);
+            if (is_array($aSteps)) {
+                $iCount = count($aSteps);
+            }
         }
         return $iCount;
     }
@@ -387,10 +384,10 @@ class OSMapOpenRoute
     {
         $aSegments = null;
         if ($this->strFormat == self::FMT_JSON && $this->response) {
-            if (!$this->aJson) {
+            if (empty($this->aJson) && strlen($this->response) > 0) {
                 $this->aJson = json_decode($this->response, true);
             }
-            if (is_array($this->aJson) && isset($this->aJson['routes']) && is_array($this->aJson['routes'])) {
+            if (isset($this->aJson['routes']) && is_array($this->aJson['routes'])) {
                 $aRoute = $this->aJson['routes'][0];
                 $aSegments = (isset($aRoute['segments']) && is_array($aRoute['segments'])) ? $aRoute['segments'] : null;
             }
@@ -425,10 +422,10 @@ class OSMapOpenRoute
     {
         $value = null;
         if ($this->strFormat == self::FMT_JSON && $this->response) {
-            if (!$this->aJson) {
+            if (empty($this->aJson) && strlen($this->response) > 0) {
                 $this->aJson = json_decode($this->response, true);
             }
-            if (is_array($this->aJson) && isset($this->aJson['routes']) && is_array($this->aJson['routes'])) {
+            if (isset($this->aJson['routes']) && is_array($this->aJson['routes'])) {
                 $aRoute = $this->aJson['routes'][0];
                 $value = isset($aRoute['summary'][$strName]) ? $aRoute['summary'][$strName] : null;
             }
@@ -472,45 +469,50 @@ class OSMapOpenRoute
     {
         if ($this->response) {
             $strData = '';
-            $strType = '';
             // ... make it readable before saving/downloading
             if ($this->strFormat == self::FMT_JSON || $this->strFormat == self::FMT_GEOJSON) {
                 $strData = json_encode(json_decode($this->response), JSON_PRETTY_PRINT);
-                if (strlen($strFilename) == 0) {
-                    $strFilename = 'route.json';
-                } elseif (strpos($strFilename, '.') === false) {
-                    $strFilename .= '.json';
-                }
+                $strFilename = buildFilename($strFilename, 'json');
                 if ($bSave) {
                     file_put_contents($strFilename, $strData);
-                } else {
-                    $strType = ($this->strFormat == self::FMT_JSON ? 'json' : 'geo+json');
                 }
             } elseif ($this->strFormat == self::FMT_GPX) {
                 $oDoc = new \DOMDocument();
                 $oDoc->preserveWhiteSpace = false;
                 $oDoc->formatOutput = true;
                 $oDoc->loadXML($this->response);
-                if (strlen($strFilename) == 0) {
-                    $strFilename = 'route.gpx';
-                } elseif (strpos($strFilename, '.') === false) {
-                    $strFilename .= '.gpx';
-                }
+                $strFilename = buildFilename($strFilename, 'gpx');
                 if ($bSave) {
                     $oDoc->save($strFilename);
                 } else {
                     $strData = $oDoc->saveXML();
-                    $strType = 'gpx+xml';
                 }
             }
             if (!$bSave && $strData !== false) {
-                header('Content-Type: application/' . $strType . '; charset=utf-8');
+                $aType = [self::FMT_JSON => 'json', self::FMT_GEOJSON => 'geo+json', self::FMT_GPX => 'gpx+xml'];
+                header('Content-Type: application/' . $aType[$this->strFormat] . '; charset=utf-8');
                 header('Content-Length: ' . strlen($strData));
                 header('Connection: close' );
                 header('Content-Disposition: attachment; filename=' . $strFilename);
                 echo $strData;
             }
         }
+    }
+
+    /**
+     * Build filename.
+     * @param string $strFilename
+     * @param string $strExt
+     * @return string
+     */
+    protected function buildFilename(string $strFilename, string $strExt) : string
+    {
+        if (strlen($strFilename) == 0) {
+            $strFilename = 'route.' . $strExt;
+        } elseif (strpos($strFilename, '.') === false) {
+            $strFilename .= '.' . $strExt;
+        }
+        return $strFilename;
     }
 
     /**

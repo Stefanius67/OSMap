@@ -86,14 +86,6 @@ class OSMapNominatim
      */
     public function reset() : void
     {
-        $this->strStr = '';
-        $this->strCity = '';
-        $this->strPostcode = '';
-        $this->strCountry = '';
-        $this->strRegion = '';
-        $this->strLatitude = '';
-        $this->strLongitude = '';
-        $this->strInfo = '';
     }
 
     /**

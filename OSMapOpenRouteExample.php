@@ -24,10 +24,9 @@ use SKien\OSMap\OSMapPoint;
 	$aRoute = array();
 
 	/*
-	// simple version with from - to points
 	$ptFrom = new OSMapPoint(49.41461,8.681495);
 	$ptTo = new OSMapPoint(49.420318,8.687872);
-	if ($oOR->calcRoute($ptFrom, $ptTo)) {
+	if ($oOR->calcRoute([$ptFrom, $ptTo])) {
 	}
 	*/
 

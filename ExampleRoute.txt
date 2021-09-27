@@ -1,0 +1,51 @@
+Example result for calculated route with 3 points:
+   38.95226625, -77.45342297783296          =>  Dulles International Airport
+   38.889483150000004, -77.03524967010638	=>  Washington Monument
+   38.80746845, -77.06596192040345          =>  George Washington Masonic National Memorial
+	
+
+
+Distance: 55407.3m
+Duration: 3418.5s
+Segment Count: 2
+   Segment 1
+   Distance: 43454m
+   Duration: 2628.8s
+   Step Count: 18
+      Head north
+      Turn right onto Propeller Court
+      Turn slight right onto Aviation Drive
+      Turn left
+      Keep left onto Dulles Toll Road
+      Keep left
+      Keep left onto Dulles Access Road
+      Keep left onto Dulles Access Road
+      Keep left onto Dulles Access Road
+      Keep left onto Custis Memorial Parkway, I 66
+      Keep left onto Custis Memorial Parkway, I 66
+      Keep left onto Custis Memorial Parkway, I 66
+      Keep left onto Custis Memorial Parkway, I 66
+      Keep right
+      Keep right
+      Keep left onto Independence Avenue Southwest
+      Turn left onto Raoul Wallenberg Place Southwest
+      Arrive at Raoul Wallenberg Place Southwest, on the left
+
+   Segment 2
+   Distance: 11953.3m
+   Duration: 789.7s
+   Step Count: 14
+      Head southeast on 15th Street Northwest
+      Turn left onto Jefferson Drive Southwest
+      Turn right onto 14th Street Southwest, US 1
+      Turn slight right onto 14th Street Southwest
+      Keep left onto US 1
+      Continue straight onto Richmond Highway, US 1
+      Turn right onto King Street, VA 7
+      Continue straight onto King Street, VA 7
+      Turn sharp left onto Callahan Drive
+      Turn right
+      Turn left
+      Turn slight right
+      Turn left
+      Arrive at your destination, on the left

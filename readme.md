@@ -1,0 +1,2 @@
+# PHP OpenStreetMap library
+

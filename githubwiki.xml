@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<githubwiki>
+    <title>[[project.title]]</title>
+	
+    <paths>
+        <output>./wiki/[[project.name]].wiki</output>
+    </paths>
+	
+	<source>
+		<path>SKien/[[project.name]]</path>
+	</source>
+</githubwiki>

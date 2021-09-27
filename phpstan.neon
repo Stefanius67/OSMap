@@ -1,0 +1,16 @@
+#
+# run from the commandline in the base directory of the package:
+# 	phpstan analyse
+#
+# more infos and download:
+#	https://phpstan.org/user-guide/getting-started
+# 	https://github.com/phpstan/phpstan
+#
+parameters:
+	level: 6
+	checkGenericClassInNonGenericObjectType: false
+	paths:
+		- SKien/OSMap
+		- SKien/ExtDOM
+#	scanDirectories:
+#		- path to other package(s)

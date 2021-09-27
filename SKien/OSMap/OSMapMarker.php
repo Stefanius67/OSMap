@@ -126,7 +126,7 @@ class OSMapMarker
     {
         $strScript = '';
         $strIcon = 'null';
-        if (strlen($this->strIcon) > 0 ) {
+        if (strlen($this->strIcon) > 0) {
             $aHorz = array(self::LEFT => '0', self::CENTER => '-(size.w/2)', self::RIGHT => '-size.w');
             $aVert = array(self::TOP => '0', self::MIDDLE => '-(size.h/2)', self::BOTTOM => '-size.h');
             $strIcon = 'icon';

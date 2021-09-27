@@ -63,7 +63,7 @@ class OSMapGPX
         if (file_exists($strFilename)) {
             $this->strFilename = $strFilename;
         } else {
-            trigger_error( $strFilename . ' not found!', E_USER_WARNING);
+            trigger_error($strFilename . ' not found!', E_USER_WARNING);
         }
     }
 
@@ -91,7 +91,7 @@ class OSMapGPX
     {
         $this->strStrokeColor = $strColor;
         $this->iStrokeWidth = $iWidth;
-        if ($fltOpacity >  0.0 && $fltOpacity <= 1.0) {
+        if ($fltOpacity > 0.0 && $fltOpacity <= 1.0) {
             $this->fltStrokeOpacity = $fltOpacity;
         }
     }
@@ -333,7 +333,7 @@ class OSMapGPX
                         $oDoc->addChild('time', date(DATE_ATOM), $oMeta);
                     }
                     $oTrk = $oDoc->addChild('trk', '', $oRoot);
-                    if ($oTrk!== false) {
+                    if ($oTrk !== false) {
                         $oDoc->addChild('name', $strName, $oTrk);
                         $oTrkSeg = $oDoc->addChild('trkseg', '', $oTrk);
                         if ($oTrkSeg !== false) {

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace SKien\OSMap;
 
-use function SKien\OSMap\OSMapOpenRoute\buildFilename;
 
 /**
  * Class to determine route for given start/end geolocations.
@@ -74,23 +73,23 @@ class OSMapOpenRoute
     public const FMT_GPX = 'gpx';
 
     /** @var string     API Key from https://openrouteservice.org/dev   */
-    protected string $strKey  = '';
+    protected string $strKey = '';
     /** @var string     language (short ISO 3166-3; NOT all languages are supported!)       */
     protected string $strLanguage = '';
     /** @var string     format of the response      */
-    protected string $strFormat      = self::FMT_JSON;
+    protected string $strFormat = self::FMT_JSON;
     /** @var string     vehicle type        */
     protected string $strVehicleType = self::VT_CAR;
     /** @var string     preference      */
-    protected string $strPreference  = self::FASTEST;
+    protected string $strPreference = self::FASTEST;
     /** @var bool       generate instructions       */
-    protected bool $bInstructions  = false;
+    protected bool $bInstructions = false;
     /** @var string     format for instruction      */
-    protected string $strInstructionFormat   = self::IF_TEXT;
+    protected string $strInstructionFormat = self::IF_TEXT;
     /** @var string     units for distances (m, km, mi)     */
-    protected string $strUnits       = self::UNITS_M;
+    protected string $strUnits = self::UNITS_M;
     /** @var bool       include elevation informations (ascent/descent)     */
-    protected bool $bElevation     = false;
+    protected bool $bElevation = false;
 
     /** @var string     last error      */
     protected string $strError;
@@ -472,7 +471,7 @@ class OSMapOpenRoute
             // ... make it readable before saving/downloading
             if ($this->strFormat == self::FMT_JSON || $this->strFormat == self::FMT_GEOJSON) {
                 $strData = json_encode(json_decode($this->response), JSON_PRETTY_PRINT);
-                $strFilename = buildFilename($strFilename, 'json');
+                $strFilename = $this->buildFilename($strFilename, 'json');
                 if ($bSave) {
                     file_put_contents($strFilename, $strData);
                 }
@@ -481,7 +480,7 @@ class OSMapOpenRoute
                 $oDoc->preserveWhiteSpace = false;
                 $oDoc->formatOutput = true;
                 $oDoc->loadXML($this->response);
-                $strFilename = buildFilename($strFilename, 'gpx');
+                $strFilename = $this->buildFilename($strFilename, 'gpx');
                 if ($bSave) {
                     $oDoc->save($strFilename);
                 } else {
@@ -492,7 +491,7 @@ class OSMapOpenRoute
                 $aType = [self::FMT_JSON => 'json', self::FMT_GEOJSON => 'geo+json', self::FMT_GPX => 'gpx+xml'];
                 header('Content-Type: application/' . $aType[$this->strFormat] . '; charset=utf-8');
                 header('Content-Length: ' . strlen($strData));
-                header('Connection: close' );
+                header('Connection: close');
                 header('Content-Disposition: attachment; filename=' . $strFilename);
                 echo $strData;
             }

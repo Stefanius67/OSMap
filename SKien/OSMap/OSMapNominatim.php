@@ -41,7 +41,7 @@ class OSMapNominatim
     public const REVERSE = 'reverse';
 
     /** format of the longitude/latitude values   */
-    public const __FORMAT  = 0;
+    public const __FORMAT = 0;
     /** DMS format sexagesimal (degree minute second.tenth-of-second)   */
     public const FORMAT_DMS = 0;
     /** DMS format nautical / GPS (degree minute . tenth-of-minute)   */
@@ -95,10 +95,10 @@ class OSMapNominatim
     {
         $bFound = false;
         // at least street and city or postcode should be specified
-        if (strlen($this->strStr) > 0 && (strlen($this->strCity) > 0 || strlen($this->strPostcode) > 0 )) {
+        if (strlen($this->strStr) > 0 && (strlen($this->strCity) > 0 || strlen($this->strPostcode) > 0)) {
 
             $strQuery = $this->strStr . ',' . $this->strPostcode . ' ' . $this->strCity;
-            if (strlen($this->strCountry) > 0 ) {
+            if (strlen($this->strCountry) > 0) {
                 $strQuery .= ',' . $this->strCountry;
             }
             $strQuery = 'q=' . urlencode($strQuery);
@@ -146,7 +146,7 @@ class OSMapNominatim
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $strURL);
-        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);  // nominatim will reject call without valid agent!
+        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // nominatim will reject call without valid agent!
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         if (strlen($this->strLang) > 0) {
             curl_setopt($curl, CURLOPT_HTTPHEADER, ['Accept-Language: ' . $this->strLang]);
@@ -177,7 +177,7 @@ class OSMapNominatim
         if (property_exists($oItem, 'address')) {
             $oAddr = $oItem->address;
             if ($oAddr instanceof \stdClass) {
-                if ($this->iStreetFormat == self::STREET_NAME_NR ) {
+                if ($this->iStreetFormat == self::STREET_NAME_NR) {
                     $this->strStr = $this->getProperty($oAddr, 'road') . $this->strStreetSep . ' ' . $this->getProperty($oAddr, 'house_number');
                 } else {
                     $this->strStr = $this->getProperty($oAddr, 'house_number') . $this->strStreetSep . ' ' . $this->getProperty($oAddr, 'road');
@@ -258,17 +258,20 @@ class OSMapNominatim
             $dblSec = ($dblMin - $iMin) * 60;
 
             switch ($iFormat) {
-                case self::FORMAT_DMS:  // sexagesimal (degree minute second.tenth-of-second)
+                case self::FORMAT_DMS:
+                    // sexagesimal (degree minute second.tenth-of-second)
                     $strFormated = sprintf('%2d° %2d\' %2.3f" ', $iDegree, $iMin, $dblSec);
                     $strFormated .= $strDir;
                     break;
-                case self::FORMAT_DMM:  // format nautical / GPS (degree minute . tenth-of-minute)
+                case self::FORMAT_DMM:
+                    // format nautical / GPS (degree minute . tenth-of-minute)
                     $strFormated = sprintf('%2d° %2.5f\' ', $iDegree, $dblMin);
                     $strFormated .= $strDir;
                     break;
-                case self::FORMAT_DDD:  // decimal (degree . tenth-of-degree)
+                case self::FORMAT_DDD:
                 default:
-                    $strFormated = $strValue;  // ... as it is
+                    // decimal (degree . tenth-of-degree)
+                    $strFormated = $strValue; // ... as it is
                     break;
             }
             if ($this->strEncoding != 'UTF-8') {
